@@ -1,6 +1,6 @@
 // Jenkinsfile (Windows)
 pipeline {
-  agent any
+  agent { label 'windows' }
   environment { PYTHONPATH = 'src' }
   options { timestamps() }
 
