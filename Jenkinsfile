@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('No-op') {
             steps {
-                sh 'lsa'
+                sh 'ls'
             }
         }
     }
@@ -13,8 +13,10 @@ pipeline {
             deleteDir() /* clean up our workspace */
         }
         success {
-            echo 'I succeeded!'
-        }
+        mail to: 'akshatamadavi@gmail.com',
+             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+             body: "Something is wrong with ${env.BUILD_URL}"
+    }
         unstable {
             echo 'I am unstable :/'
         }
