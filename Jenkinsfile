@@ -14,7 +14,7 @@ pipeline {
               pip install --upgrade pip
               if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
               mkdir -p test-results
-              pytest -q --junitxml=test-results/pytest.xml
+              pytest test/test_hello.py
             '''
           } else {
             bat '''
@@ -24,7 +24,7 @@ pipeline {
               python -m pip install --upgrade pip
               if exist requirements.txt pip install -r requirements.txt
               if not exist test-results mkdir test-results
-              pytest -q --junitxml=test-results\\pytest.xml
+              pytest test/test_hello.py
             '''
           }
         }
@@ -32,10 +32,3 @@ pipeline {
     }
   }
 
-  post {
-    always {
-      // Ant-style glob works on all platforms
-      junit 'test-results/**/*.xml'
-    }
-  }
-}
