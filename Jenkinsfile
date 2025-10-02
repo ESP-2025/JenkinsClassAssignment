@@ -54,21 +54,26 @@ pipeline {
 
     stage('Tests with retry/timeout') {
       steps {
+        echo "Starting test stage"
         timeout(time: 5, unit: 'MINUTES') {
           retry(2) {
-            sh '''
-              echo "=== Tests ==="
-              echo "RUN_SLOW_TESTS is: '"$RUN_SLOW_TESTS"'"
-              mkdir -p test-results
-              cat > test-results/sample.xml <<EOF
-              <testsuite tests="1"><testcase classname="demo" name="ok"/></testsuite>
-              EOF
-            '''
+            script {
+              echo "Attempt to run tests"
+              sh '''
+                echo "=== Tests ==="
+                echo "Running tests with RUN_SLOW_TESTS=${RUN_SLOW_TESTS}"
+                mkdir -p test-results
+                cat > test-results/sample.xml <<EOF
+                <testsuite tests="1"><testcase classname="demo" name="ok"/></testsuite>
+                EOF
+              '''
+            }
           }
         }
       }
       post {
         always {
+          echo "Processing test results"
           junit allowEmptyResults: true, testResults: 'test-results/*.xml'
         }
       }
