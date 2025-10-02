@@ -1,30 +1,23 @@
 pipeline {
     agent any
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
-        stage('No-op') {
+        stage('Build') {
             steps {
-                sh 'ls'
+                echo 'Building'
             }
         }
-    }
-    post {
-        always {
-            echo 'One way or another, I have finished'
-            deleteDir() /* clean up our workspace */
+        stage('Test') {
+            steps {
+                echo 'Testing'
+            }
         }
-        success {
-            echo 'I succeeded!'
-        }
-        unstable {
-            echo 'I am unstable :/'
-        }
-        failure {
-        mail to: 'akshatamadavi@gmail.com',
-             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-             body: "Something is wrong with ${env.BUILD_URL}"
-    }
-        changed {
-            echo 'Things were different before...'
+        stage('Deploy') {
+            steps {
+                echo 'Deploying'
+            }
         }
     }
 }
