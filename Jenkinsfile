@@ -74,39 +74,8 @@ pipeline {
       }
     }
 
-    stage('Use credentials safely') {
-      steps {
-        // 1) Create a secret/text credential in Jenkins (e.g., ID: GITHUB_TOKEN)
-        // 2) Jenkins will expose it as an env var only inside this block and mask it in logs
-        withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GH_TOKEN')]) {
-          sh '''
-            echo "=== Using a token safely ==="
-            # value is available as $GH_TOKEN (masked in logs)
-            test -n "$GH_TOKEN" && echo "Token is set (masked)"
-            # Example: curl -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/user
-          '''
-        }
-      }
-    }
+    
 
-    stage('Deploy') {
-      when { branch 'main' }
-      environment {
-        // compute from parameter; keeps deploy config in env
-        TARGET_ENV = "${params.DEPLOY_ENV}"
-      }
-      steps {
-        timeout(time: 5, unit: 'MINUTES') {
-          retry(3) {
-            sh '''
-              echo "=== Deploy ==="
-              echo "Deploying to $TARGET_ENV (APP_ENV=$APP_ENV)"
-              # ./scripts/deploy.sh "$TARGET_ENV"
-            '''
-          }
-        }
-      }
-    }
   }
 
   post {
